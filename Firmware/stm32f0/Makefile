@@ -12,12 +12,14 @@ LFLAGS       = -TSTM32F072VB_FLASH.ld
 USE_NONHOST  = --specs=nosys.specs
 
 #-------------------------------------------------------------------------
-#CProject Config
+#Project Config
 #-------------------------------------------------------------------------
 
 NAME         = firmware
-SCRDIR       = scr
-OBJECTS      = main.o system_stm32f0xx.o stm32f0xx_it.o delay.o can.o virtualCom.o  startup_stm32f072.s
+SRCDIR       = src
+BLDDIR       = build
+DEP          = $(patsubst $(SRCDIR)/%.c,build/%.o,$(wildcard $(SRCDIR)/*.c)) 
+OBJ          = $(DEP) startup_stm32f072.s
 
 #-------------------------------------------------------------------------
 #Targets
@@ -31,16 +33,16 @@ debug:
 
 .PHONY: clean
 clean:
-	@rm *.o *.elf 
+	@rm build/*.o *.elf 
 
 #-------------------------------------------------------------------------
 #Target Rules
 #-------------------------------------------------------------------------
 
-%.o : $(SCRDIR)/%.c
-	@$(CC) $(M0) $(CFLAGS) -o $@ -c $<
+$(BLDDIR)/%.o : $(SRCDIR)/%.c
+	$(CC) $(M0) $(CFLAGS) -o $@ -c $<
 
-$(NAME).elf : $(OBJECTS)
-	@$(CC) $(M0) $(USE_NONHOST) $(LFLAGS) -o $@ $^
+$(NAME).elf : $(OBJ)
+	$(CC) $(M0) $(USE_NONHOST) $(LFLAGS) -o $@ $^
 
 
