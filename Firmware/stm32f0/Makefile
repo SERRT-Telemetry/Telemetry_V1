@@ -33,7 +33,7 @@ debug:
 
 .PHONY: clean
 clean:
-	@rm build/*.o *.elf 
+	@rm $(BLDDIR)/*.o *.elf 
 
 #-------------------------------------------------------------------------
 #Target Rules
