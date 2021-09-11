@@ -28,8 +28,8 @@ void canFilterInit(void)
   CAN->FS1R |= CAN_FS1R_FSC0;                       //Select Dual 32 bit Filters
   CAN->FM1R &= ~CAN_FM1R_FBM0;                      //Set Filter to Identifier Mask, if not running switch to Identifier list
   
-  CAN->sFilterRegister[0].FR1 = CAN_ID;         //ID
-  CAN->sFilterRegister[0].FR2 = ~0xFFFFFFFF;        //Filter
+  CAN->sFilterRegister[0].FR1 = 0x6B0FFFFF;          //ID
+  CAN->sFilterRegister[0].FR2 = 0xFFFFFFFFUL;       //???Filter
   CAN->FMR &= ~CAN_FMR_FINIT;                       //Finish Configuring filter
 
 }
