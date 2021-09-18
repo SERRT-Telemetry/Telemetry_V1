@@ -2,4 +2,4 @@
 *.elf
 openocd.log
 .vscode
-
+.DS_Store
