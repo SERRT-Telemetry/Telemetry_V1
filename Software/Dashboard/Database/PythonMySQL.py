@@ -6,8 +6,23 @@ host = 'db4free.net'  # 'localhost'  # '48564.us-imm-sql6.000webhost.io'
 database = 'esp32data'  # 'id17488151_esp32'
 port = '3306'
 
-cnx = mysql.connector.connect(user=user, password=password, host=host, database=database, port=port)
+db = mysql.connector.connect(user=user, password=password, host=host, database=database, port=port)
 
-print("Connected to " + database)
+print("Connected to database!")
 
-cnx.close()
+# get cursor object
+cursor= db.cursor()
+  
+# execute your query
+cursor.execute("SELECT * FROM SensorData")
+  
+# fetch all the matching rows 
+result = cursor.fetchall()
+  
+# loop through the rows
+for row in result:
+    print(row)
+    print("\n")
+
+cursor.close()
+db.close()
