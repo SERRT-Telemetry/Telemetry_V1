@@ -5,4 +5,3 @@ import dash_html_components as html
 import math
 
 print(math.sqrt(25))
-
