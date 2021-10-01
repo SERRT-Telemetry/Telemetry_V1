@@ -2,6 +2,7 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 
+from typing import Container
 from numpy import random
 import plotly.express as px
 import pandas as pd
@@ -11,9 +12,11 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_daq as daq
-import plotly.graph_objs as go
 
-app = dash.Dash(__name__)
+app = dash.Dash(
+    __name__,
+    external_stylesheets = [dbc.themes.BOOTSTRAP]
+)
 
 colors = {
     'text': '#7FDBFF'
@@ -24,25 +27,99 @@ gauge_size = "auto"
 # see https://plotly.com/python/px-arguments/ for more options
 
 N = 30
-df = pd.DataFrame(dict(
+df1 = pd.DataFrame(dict(
     x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     y = [0, np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N)]
 ))
-fig1 = px.line(df, x="x", y="y", title="Input Power")
+df2 = pd.DataFrame(dict(
+    x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    y = [0, np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N)]
+))
+df3 = pd.DataFrame(dict(
+    x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    y = [0, np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N), np.random.randint(0, N)]
+))
+fig1 = px.line(df1, x="x", y="y", title="Input Power", width=500, height=400)
 fig1.update_layout(xaxis_title="Time (s)",
                     yaxis_title="Power (Watts)")
+fig2 = px.line(df2, x="x", y="y", title="Output Power", width=500, height=400)
+fig2.update_layout(xaxis_title="Time (s)",
+                    yaxis_title="Power (Watts)")
+fig3 = px.line(df3, x="x", y="y", title="Battery Voltage", width=500, height=400)
+fig3.update_layout(xaxis_title="Time (s)",
+                    yaxis_title="Voltage (Volts)")
+
+Total_power_display = dbc.Card(
+    children=[
+        dbc.CardHeader(
+            "Total Power [Watts]",
+            style={
+                "text-align": "center",
+                "color": "black"
+            },
+        ),
+        dbc.CardBody(
+            [
+                html.Div(
+                    daq.Gauge(
+                        min=0,
+                        max=60,
+                        value=28,
+                        units="Watts",
+                        size=175,
+                        showCurrentValue=True,
+                        color="#fead36",
+                        style={
+                            "align": "center",
+                            "marginTop": "2%",
+                            "display": "flex"
+                        }
+                    )
+                )
+            ]
+        )
+    ]
+)
+
+Auxiliary_battery_display = dbc.Card(
+    children=[
+        dbc.CardHeader(
+            "Auxiliary Battery [Watts]",
+            style={
+                "text-align": "center",
+                "color": "black"
+            }
+        ),
+        dbc.CardBody(
+            [
+                html.Div(
+                    daq.Gauge(
+                        min=0,
+                        max=60,
+                        value=28,
+                        units="Watts",
+                        size=175,
+                        showCurrentValue=True,
+                        color="#fead36",
+                        style={
+                            "align": "center",
+                            "marginTop": "2%",
+                            "display": "flex"
+                        }
+                    )
+                )
+            ]
+        )
+    ]
+)
 
 Velocity_display = dbc.Card(
     children=[
         dbc.CardHeader(
             "Velocity [MPH]",
             style={
-                "display": "flex",
                 "text-align": "center",
-                "color": "black",
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(121, 121, 121)",
+                "color": "black"
             },
         ),
         dbc.CardBody(
@@ -54,125 +131,19 @@ Velocity_display = dbc.Card(
                         value=57,
                         units="MPH",
                         scale={'start': 0, 'interval': 15, 'labelInterval': 2},
-                        size=300,
+                        size=250,
                         showCurrentValue=True,
                         color={"gradient":True,"ranges":{"green":[0,40],"yellow":[40,80],"red":[80,120]}},
                         style={
                             "align": "center",
-                            "display": "inline-block",
                             "marginTop": "2%",
-                            "marginBottom": "2%",
-                        },
-                    ),
-                    style={
-                        "display": "inline-block",
-                        "border-radius": "1px",
-                        "border-width": "5px",
-                    },
+                            "display": "flex"
+                        }
+                    )
                 )
-            ],
-            style={
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(216, 216, 216)",
-            },
-        ),
-    ],
-    style={"height": "95%"},
-)
-
-Total_power_display = dbc.Card(
-    children=[
-        dbc.CardHeader(
-            "Total Power [Watts]",
-            style={
-                "display": "flex",
-                "text-align": "center",
-                "color": "black",
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(121, 121, 121)",
-            },
-        ),
-        dbc.CardBody(
-            [
-                html.Div(
-                    daq.Gauge(
-                        min=0,
-                        max=60,
-                        value=28,
-                        units="Watts",
-                        showCurrentValue=True,
-                        color="#fead36",
-                        style={
-                            "align": "center",
-                            "display": "flex",
-                            "marginTop": "2%",
-                            "marginBottom": "2%",
-                        },
-                    ),
-                    style={
-                        "display": "flex",
-                        "border-radius": "1px",
-                        "border-width": "5px",
-                    },
-                )
-            ],
-            style={
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(216, 216, 216)",
-            },
-        ),
-    ],
-    style={"height": "95%"},
-)
-
-Auxiliary_battery_display = dbc.Card(
-    children=[
-        dbc.CardHeader(
-            "Auxiliary Battery []",
-            style={
-                "display": "flex",
-                "text-align": "center",
-                "color": "black",
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(121, 121, 121)",
-            },
-        ),
-        dbc.CardBody(
-            [
-                html.Div(
-                    daq.Gauge(
-                        min=0,
-                        max=60,
-                        value=28,
-                        units="Watts",
-                        showCurrentValue=True,
-                        color="#fead36",
-                        style={
-                            "align": "center",
-                            "display": "flex",
-                            "marginTop": "2%",
-                            "marginBottom": "2%",
-                        },
-                    ),
-                    style={
-                        "display": "flex",
-                        "border-radius": "1px",
-                        "border-width": "5px",
-                    },
-                )
-            ],
-            style={
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(216, 216, 216)",
-            },
-        ),
-    ],
-    style={"height": "95%"},
+            ]
+        )
+    ]
 )
 
 Low_voltage_display = dbc.Card(
@@ -180,13 +151,9 @@ Low_voltage_display = dbc.Card(
         dbc.CardHeader(
             "Low Voltage [Volts]",
             style={
-                "display": "flex",
                 "text-align": "center",
-                "color": "black",
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(121, 121, 121)",
-            },
+                "color": "black"
+            }
         ),
         dbc.CardBody(
             [
@@ -195,31 +162,20 @@ Low_voltage_display = dbc.Card(
                         min=0,
                         max=60,
                         value=28,
-                        units="Watts",
+                        units="Volts",
+                        size=175,
                         showCurrentValue=True,
                         color="#fead36",
                         style={
                             "align": "center",
                             "display": "flex",
-                            "marginTop": "2%",
-                            "marginBottom": "2%",
-                        },
-                    ),
-                    style={
-                        "display": "flex",
-                        "border-radius": "1px",
-                        "border-width": "5px",
-                    },
+                            "marginTop": "2%"
+                        }
+                    )
                 )
-            ],
-            style={
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(216, 216, 216)",
-            },
-        ),
-    ],
-    style={"height": "95%"},
+            ]
+        )
+    ]
 )
 
 Net_power_display = dbc.Card(
@@ -227,13 +183,9 @@ Net_power_display = dbc.Card(
         dbc.CardHeader(
             "Net Power [Watts]",
             style={
-                "display": "flex",
                 "text-align": "center",
-                "color": "black",
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(121, 121, 121)",
-            },
+                "color": "black"
+            }
         ),
         dbc.CardBody(
             [
@@ -243,80 +195,76 @@ Net_power_display = dbc.Card(
                         max=60,
                         value=28,
                         units="Watts",
+                        size=175,
                         showCurrentValue=True,
                         color="#fead36",
                         style={
                             "align": "center",
                             "display": "flex",
-                            "marginTop": "2%",
-                            "marginBottom": "2%",
-                        },
-                    ),
-                    style={
-                        "display": "flex",
-                        "border-radius": "1px",
-                        "border-width": "5px",
-                    },
+                            "marginTop": "2%"
+                        }
+                    )
                 )
-            ],
-            style={
-                "border-radius": "1px",
-                "border-width": "5px",
-                "border-top": "1px solid rgb(216, 216, 216)",
-            },
-        ),
-    ],
-    style={"height": "95%"},
+            ]
+        )
+    ]
 )
 
 app.layout = html.Div(children=[
-    html.Img(
-        src=logo
-    ),
-    html.H1(
-        children='Solar Car Dashboard',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
-    ),
-    dcc.Graph(
-        figure=fig1
-    ),
-    # dcc.Graph(
-    #     figure=Output_power
-    # ),
-    # dcc.Graph(
-    #     figure=Battery_voltage
-    # ),
     dbc.Row([
-        dbc.Col(Total_power_display,
-            xs=gauge_size,
-            md=gauge_size,
-            lg=gauge_size,
-            width=gauge_size),
-        dbc.Col(Auxiliary_battery_display,
-            xs=gauge_size,
-            md=gauge_size,
-            lg=gauge_size,
-            width=gauge_size),
-        dbc.Col(Velocity_display,
-            xs=gauge_size,
-            md=gauge_size,
-            lg=gauge_size,
-            width=gauge_size),
-        dbc.Col(Low_voltage_display,
-            xs=gauge_size,
-            md=gauge_size,
-            lg=gauge_size,
-            width=gauge_size),
-        dbc.Col(Net_power_display,
-            xs=gauge_size,
-            md=gauge_size,
-            lg=gauge_size,
-            width=gauge_size)
-    ])
+        html.Img(
+            src=logo,
+            alt="Logo",
+            width=250,
+            height=100
+        ),
+        html.H1(
+            children='Solar Car Dashboard',
+            style={
+                'color': colors['text'],
+                'marginLeft': '300px',
+                'marginTop': '25px'
+            }
+        )
+    ]),
     
+    dbc.Row([
+        dcc.Graph(
+        figure=fig1,
+        ),
+        dcc.Graph(
+            figure=fig2
+        ),
+        dcc.Graph(
+            figure=fig3
+        )
+    ]),
+
+    dbc.Row([
+        dbc.Col([
+            dbc.Row(Total_power_display),
+            dbc.Row(Auxiliary_battery_display)
+        ]),
+        dbc.Col(
+            dbc.Row(Velocity_display), align='center'
+        ),
+        dbc.Col([
+            dbc.Row(Low_voltage_display),
+            dbc.Row(Net_power_display)
+        ]),
+        dbc.Col([
+            dbc.Row([
+                daq.LEDDisplay(
+                    label = 'Codes',
+                    value = '00',
+                    size = 80
+                )
+            ])
+        ], align='center')
+    ], style={
+        'margin': 50
+    },no_gutters=True)
+
 ])
 
 if __name__ == '__main__':
