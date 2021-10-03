@@ -1,9 +1,9 @@
 import mysql.connector
 
-user = 'telemetry'  # 'id17488151_esp32_serrt'
-password = 'solarpower'  # 'solarpower' #'Solarpower2021$'
-host = 'db4free.net'  # 'localhost'  # '48564.us-imm-sql6.000webhost.io'
-database = 'esp32data'  # 'id17488151_esp32'
+user = 'Administrator'
+password = 'Solarpower802'
+host = 'serrt-database.c7sgroillrv6.us-east-2.rds.amazonaws.com'
+database = 'serrt-database'
 port = '3306'
 
 db = mysql.connector.connect(user=user, password=password, host=host, database=database, port=port)
