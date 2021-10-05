@@ -1,6 +1,6 @@
 {
     "configuration": "FlashFreq=80,UploadSpeed=115200,DebugLevel=none",
     "board": "esp32:esp32:esp32doit-devkit-v1",
-    "port": "COM3",
-    "sketch": "Software\\Arduino\\esp32.ino"
+    "port": "COM5",
+    "sketch": "Firmware\\ESP32\\esp32.ino"
 }
