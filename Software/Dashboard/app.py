@@ -2,7 +2,6 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 
-from typing import Container
 from numpy import random
 import plotly.express as px
 import pandas as pd
@@ -19,7 +18,7 @@ app = dash.Dash(
 )
 
 colors = {
-    'text': '#7FDBFF'
+    'text': '#000'
 }
 logo = 'assets/logo.png'
 gauge_size = "auto"
@@ -41,64 +40,62 @@ df3 = pd.DataFrame(dict(
 ))
 fig1 = px.line(df1, x="x", y="y", title="Input Power", width=500, height=400)
 fig1.update_layout(xaxis_title="Time (s)",
-                    yaxis_title="Power (Watts)")
+                    yaxis_title="Power (Watts)",
+                    title_x=0.5)
 fig2 = px.line(df2, x="x", y="y", title="Output Power", width=500, height=400)
 fig2.update_layout(xaxis_title="Time (s)",
-                    yaxis_title="Power (Watts)")
+                    yaxis_title="Power (Watts)",
+                    title_x=0.5)
 fig3 = px.line(df3, x="x", y="y", title="Battery Voltage", width=500, height=400)
 fig3.update_layout(xaxis_title="Time (s)",
-                    yaxis_title="Voltage (Volts)")
+                    yaxis_title="Voltage (Volts)",
+                    title_x=0.5)
 
-Total_power_display = dbc.Card(
+Total_power_display = html.Div(
     children=[
-        dbc.CardHeader(
+        html.Div(
             "Total Power [Watts]",
             style={
                 "text-align": "center",
                 "color": "black"
             },
         ),
-        dbc.CardBody(
-            [
-                html.Div(
-                    daq.Gauge(
-                        min=0,
-                        max=60,
-                        value=28,
-                        units="Watts",
-                        size=175,
-                        showCurrentValue=True,
-                        color="#fead36",
-                        style={
-                            "align": "center",
-                            "marginTop": "2%",
-                            "display": "flex"
-                        }
-                    )
-                )
-            ]
-        )
+        html.Div(
+            daq.Gauge(
+                min=0,
+                max=60,
+                value=28,
+                units="Watts",
+                size=200,
+                showCurrentValue=True,
+                color="#fead36",
+                style={
+                    "align": "center",
+                    "marginTop": "2%",
+                    "display": "flex"
+                }
+            )
+        )     
     ]
 )
 
-Auxiliary_battery_display = dbc.Card(
+Auxiliary_battery_display = html.Div(
     children=[
-        dbc.CardHeader(
+        html.Div(
             "Auxiliary Battery [Watts]",
             style={
                 "text-align": "center",
                 "color": "black"
             }
         ),
-        dbc.CardBody(
-            [
+        
                 html.Div(
                     daq.Gauge(
                         min=0,
                         max=60,
                         value=28,
                         units="Watts",
-                        size=175,
+                        size=200,
                         showCurrentValue=True,
                         color="#fead36",
                         style={
@@ -107,23 +104,22 @@ Auxiliary_battery_display = dbc.Card(
                             "display": "flex"
                         }
                     )
-                )
-            ]
+               
         )
-    ]
+    ], style={
+        "color": "black"
+    }
 )
 
-Velocity_display = dbc.Card(
+Velocity_display = html.Div(
     children=[
-        dbc.CardHeader(
+        html.Div(
             "Velocity [MPH]",
             style={
                 "text-align": "center",
                 "color": "black"
             },
         ),
-        dbc.CardBody(
-            [
                 html.Div(
                     daq.Gauge(
                         min=0,
@@ -131,7 +127,7 @@ Velocity_display = dbc.Card(
                         value=57,
                         units="MPH",
                         scale={'start': 0, 'interval': 15, 'labelInterval': 2},
-                        size=250,
+                        size=200,
                         showCurrentValue=True,
                         color={"gradient":True,"ranges":{"green":[0,40],"yellow":[40,80],"red":[80,120]}},
                         style={
@@ -141,29 +137,25 @@ Velocity_display = dbc.Card(
                         }
                     )
                 )
-            ]
-        )
     ]
 )
 
-Low_voltage_display = dbc.Card(
+Low_voltage_display = html.Div(
     children=[
-        dbc.CardHeader(
+        html.Div(
             "Low Voltage [Volts]",
             style={
                 "text-align": "center",
                 "color": "black"
             }
         ),
-        dbc.CardBody(
-            [
                 html.Div(
                     daq.Gauge(
                         min=0,
                         max=60,
                         value=28,
                         units="Volts",
-                        size=175,
+                        size=200,
                         showCurrentValue=True,
                         color="#fead36",
                         style={
@@ -173,29 +165,26 @@ Low_voltage_display = dbc.Card(
                         }
                     )
                 )
-            ]
-        )
     ]
 )
 
-Net_power_display = dbc.Card(
+Net_power_display = html.Div(
     children=[
-        dbc.CardHeader(
+        html.Div(
             "Net Power [Watts]",
             style={
                 "text-align": "center",
                 "color": "black"
             }
         ),
-        dbc.CardBody(
-            [
+
                 html.Div(
                     daq.Gauge(
-                        min=0,
-                        max=60,
-                        value=28,
+                        min=-100,
+                        max=100,
+                        value=0,
                         units="Watts",
-                        size=175,
+                        size=200,
                         showCurrentValue=True,
                         color="#fead36",
                         style={
@@ -205,12 +194,12 @@ Net_power_display = dbc.Card(
                         }
                     )
                 )
-            ]
-        )
     ]
 )
 
-app.layout = html.Div(children=[
+app.layout = html.Div(
+    className="background",
+    children=[
     dbc.Row([
         html.Img(
             src=logo,
@@ -228,17 +217,17 @@ app.layout = html.Div(children=[
         )
     ]),
     
-    dbc.Row([
-        dcc.Graph(
-        figure=fig1,
-        ),
-        dcc.Graph(
-            figure=fig2
-        ),
-        dcc.Graph(
-            figure=fig3
-        )
-    ]),
+    # dbc.Row([
+    #     dcc.Graph(
+    #     figure=fig1,
+    #     ),
+    #     dcc.Graph(
+    #         figure=fig2
+    #     ),
+    #     dcc.Graph(
+    #         figure=fig3
+    #     )
+    # ]),
 
     dbc.Row([
         dbc.Col([
@@ -257,7 +246,8 @@ app.layout = html.Div(children=[
                 daq.LEDDisplay(
                     label = 'Codes',
                     value = '00',
-                    size = 80
+                    size = 80,
+                    color="red"
                 )
             ])
         ], align='center')
