@@ -7,7 +7,8 @@
                 // Arduino libraries location
                 "C:\\Users\\machi\\OneDrive\\Documents\\Arduino\\libraries\\**",
                 "S:\\Program Files (x86)\\Arduino\\libraries\\**",
-                "S:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries\\**"
+                "S:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries\\**",
+                "C:\\Users\\machi\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\1.0.6\\libraries"
             ],
             "defines": [
                 "_DEBUG",

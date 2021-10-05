@@ -1,13 +1,18 @@
 // https://github.com/ChuckBell/MySQL_Connector_Arduino/wiki/Examples#connect-by-hostname-connect_by_hostnameino
+// https://blog.devgenius.io/visual-studio-code-arduino-configuration-and-import-solution-a5f188a0cfd0
 
+#include <Dns.h>
+#include <Ethernet.h>
 #include <HTTPClient.h>
 #include <MySQL_Connection.h>
 #include <MySQL_Cursor.h>
 #include <WiFi.h>
+#include <SPI.h>
+#include <WiFiNINA.h>
 
 // Known Networks
-const char* apa = "C-Net";
-const char* apaPW = "mustang5";
+const char* apa = "ADTRAN_2.4G GHz_1EAC";
+const char* apaPW = "IytRdMeo";
 
 const char* casa = "Machinest";
 const char* casaPW = "Magicalairplane7691";
@@ -18,57 +23,53 @@ const char* rumPW = "Colegio2019";
 const char* ssidList[] = { apa, casa, rum };
 const char* pwList[] = { apaPW, casaPW, rumPW };
 
-byte mac_addr[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+const char* ssid = apa;
+const char* password = apaPW;
 
-IPAddress server_addr(127, 0, 0, 1); // IP of the MySQL *server* here
-char user[] = "telemetry"; // MySQL user login username
-char password[] = "solarpower"; // MySQL user login password
+void initWiFi()
+{
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(ssid, password);
+    Serial.print("\nConnecting to WiFi ..");
+    while (WiFi.status() != WL_CONNECTED) {
+        Serial.print('.');
+        delay(1000);
+    }
+    Serial.println("\nConnected to WiFi with IP: " + WiFi.localIP());
+}
 
-// Sample query
-char INSERT_DATA[] = "INSERT INTO test_arduino.hello_sensor (message, sensor_num, value) VALUES ('%s',%d,%s)";
-char query[128];
-char temperature[10];
+char hostname[] = "serrt-database.c7sgroillrv6.us-east-2.rds.amazonaws.com"; // change to your server's hostname/URL
+char user[] = "admin"; // MySQL user login username
+char dbPassword[] = "Solarpower802"; // MySQL user login password
+char database[] = "sensor_data"; // MySQL database name
 
-EthernetClient client;
+IPAddress server_ip;
+WiFiClient client;
 MySQL_Connection conn((Client*)&client);
 
 void setup()
 {
     Serial.begin(115200);
+
     while (!Serial)
         ; // wait for serial port to connect
-    
-    Serial.print("Connecting to ");
-    Serial.println(rum);
 
-    WiFi.begin(rum, rumPW);
+    initWiFi();
 
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-    }
+    // Begin DNS lookup
+    WiFi.hostByName(hostname, server_ip);
+    Serial.println("\nHostname sesolved to IP Adress: " + server_ip);
+    // End DNS lookup
 
-    Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-    
-    Serial.println("Connecting...");
-    if (conn.connect(server_addr, 3306, user, password)) {
+    Serial.println("\nConnecting to databse...");
+
+    if (conn.connect(server_ip, 3306, user, dbPassword, database)) {
         delay(1000);
-        // Initiate the query class instance
-        MySQL_Cursor* cur_mem = new MySQL_Cursor(&conn);
-        // Save
-        dtostrf(50.125, 1, 1, temperature);
-        sprintf(query, INSERT_DATA, "test sensor", 24, temperature);
-        // Execute the query
-        cur_mem->execute(query);
-        // Note: since there are no results, we do not need to read any data
-        // Deleting the cursor also frees up memory used
-        delete cur_mem;
-        Serial.println("Data recorded.");
-    } else
-        Serial.println("Connection failed.");
+        // You would add your code here to run a query once on startup.
+        Serial.println("\nSuccesfully connected to database!");
+    } else {
+        Serial.println("\nConnection failed.");
+    }
     conn.close();
 }
 
