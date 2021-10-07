@@ -32,12 +32,20 @@ class mechanicalCharacteristics:
         self.Cd = Cd
         self.m = m
 
+#Assumptions for testing model
+#0deg grade
+#No Acceleration constant 
+#Assuming Sun is Perpendicular to Array and there is zero indirect solar irradiation 
+#Assuming no Wind
+#Basically assume everything is constant to avoid integration this is only for testing model
+
 class solarCar:
     
-    def __init__(self, electricalParams, mechanicalParams):
+    def __init__(self, electricalParams, mechanicalParams, energyBat):
         self.electricalParams = electricalParams
         self. mechanicalParams = mechanicalParams
+        self.energyBat = energyBat
 
-    def Eout(self, ma, Fa, Fr):
-    
+    def Eout(self, Fa, Fr):
+        
     
