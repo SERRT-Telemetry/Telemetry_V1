@@ -47,5 +47,4 @@ class solarCar:
         self.energyBat = energyBat
 
     def Eout(self, Fa, Fr):
-        
-    
+        return
