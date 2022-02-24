@@ -1,0 +1,22 @@
+/*                
+ *                 Transmitter code
+* by Dejan Nedelkovski, www.HowToMechatronics.com
+* 
+* Library: TMRh20/RF24, https://github.com/tmrh20/RF24/
+*/
+/*#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>*/
+RF24 radio(7, 8); //  pinout CE, CSN on D7 and D8 respectively//
+const byte address[6] = "00001"; // address for the communication pipeline  
+void setup() {
+  radio.begin();//initialize radio module//
+  radio.openWritingPipe(address);//opening designated address to communicate with reciever//
+  radio.setPALevel(RF24_PA_MAX);//setting power level to maximum//
+  radio.stopListening();//module transmits information//
+}
+void loop() {
+  float ldr_value = analogRead(A0);//read pin A0 for analog values of the ldr sensor//
+  radio.write(&ldr_value, float(ldr_value));//pullout data from referenced value//
+  delay(1000);//send every second//
+}
